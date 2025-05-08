@@ -81,15 +81,15 @@ flake8 .
 
 ## Roadmap
 
+- [ ] Cooldown to not get blocked
 - [ ] Docker support
 - [ ] Support for Excel data sources
-- [ ] Docker support
 
 ---
 
 ## Contributing
 
-Contributions are welcome. Please fork the repo and create a pull request. Ensure your code is formatted with `black`, `isort`.
+Contributions are welcome. Please fork the repo and create a pull request.
 
 ---
 

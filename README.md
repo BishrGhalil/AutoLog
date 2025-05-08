@@ -36,10 +36,19 @@ The input CSV should include the following columns (Kimai format), Order doesn't
 
 | Field                  | Description                                                        |
 | ---------------------- | ------------------------------------------------------------------ |
-| Date                   | Start time (e.g., 2025-05-07T10:00:00)                             |
-| Duration               | Time spent (e.g., 2h, 30m)                                         |
+| Date                   | Start date (e.g., 2025-05-07)                                      |
+| From                   | Start time (e.g., 8:00)                                            |
+| Duration               | Time spent in seconds                                              |
 | Activity               | Contains Jira issue key (e.g., [PROJ-123] blah or [PROJ] 123 blah) |
 | Description (optional) | Work log comment                                                   |
+
+**Example**
+
+| Date       | From  | Duration | Activity                      | Description                    |
+| ---------- | ----- | -------- | ----------------------------- | ------------------------------ |
+| 2025-05-04 | 08:00 | 28800    | [SWTF-7] Series Edit Page     | implemented series edit page   |
+| 2025-05-07 | 11:00 | 10800    | [SWTF-8] Auto White Balancing |                                |
+| 2025-05-05 | 08:00 | 21600    | [SWTF-9] Authentication       | refactored authentication code |
 
 ---
 

@@ -2,6 +2,7 @@
 
 import keyring
 
+
 class CredentialManager:
     SERVICE_NAME = "jira_worklog_app"
 

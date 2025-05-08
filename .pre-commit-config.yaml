@@ -3,7 +3,7 @@ repos:
     rev: v2.3.1
     hooks:
       - id: autoflake
-        args: ["--remove-all-unused-imports", "--remove-unused-variables", "--in-place"]
+        args: ["--remove-all-unused-imports", "--in-place"]
         types: [python]
 
   - repo: https://github.com/psf/black
@@ -12,8 +12,8 @@ repos:
       - id: black
         language_version: python3.12
 
-  - repo: https://github.com/pre-commit/mirrors-isort
-    rev: v6.0.1
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
     hooks:
       - id: isort
         args: ["--profile=black"]
@@ -27,4 +27,4 @@ repos:
         language_version: python3.12
 
 
-default_stages: [commit, push]
+default_stages: [pre-commit, pre-push]

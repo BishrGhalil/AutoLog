@@ -1,0 +1,4 @@
+"Date","From","Duration","Activity","Description"
+"2025-05-04","08:00","28800","[SWTF-744] Series Edit Page","implemented series edit page"
+"2025-05-07","11:00","10800","[SWTF-811] Auto White Balancing",""
+"2025-05-05","08:00","21600","[SWTF-911] Authentication","refactored authentication code"

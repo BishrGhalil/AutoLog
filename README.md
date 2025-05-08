@@ -77,10 +77,17 @@ Run linters:
 ruff .
 ```
 
+Build executable:
+
+```bash
+pyinstaller --noconfirm --clean autolog.spec
+```
+
 ---
 
 ## Roadmap
 
+- [ ] Code signing for Windows
 - [ ] Cooldown to not get blocked
 - [ ] Docker support
 - [ ] Support for Excel data sources

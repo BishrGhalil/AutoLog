@@ -71,10 +71,10 @@ python3 -m pip install -r requirements.txt
 python main.py
 ```
 
-Run linters/tests:
+Run linters:
 
 ```bash
-flake8 .
+ruff .
 ```
 
 ---

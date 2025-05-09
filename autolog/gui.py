@@ -1,5 +1,6 @@
 """GUI logic"""
 
+import logging
 import threading
 import time
 import tkinter as tk
@@ -22,6 +23,7 @@ ctk.set_default_color_theme("blue")
 
 COOLDOWN_SEC = 2
 COOLDOWN_EVERY = 10
+logger = logging.getLogger(__file__)
 
 
 # Constants
@@ -370,11 +372,14 @@ class WorklogApp(ctk.CTk):
             self.after(
                 0, lambda: messagebox.showerror("Error", f"An error occurred: {error}")
             )
+            logger.error(e)
+
         except Exception as e:
             error = str(e)
             self.after(
                 0, lambda: messagebox.showerror("Error", f"An error occurred: {error}")
             )
+            logger.exception(e)
         finally:
             self.after(0, lambda: self.process_btn.configure(state="normal"))
 

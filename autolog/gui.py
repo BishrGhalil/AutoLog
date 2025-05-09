@@ -220,8 +220,8 @@ class WorklogApp(ctk.CTk):
         }
 
         for col in columns:
-            self.tree.heading(col, text=col)
-            self.tree.column(col, width=col_widths[col])
+            self.tree.heading(col, text=col, anchor="center")
+            self.tree.column(col, width=col_widths[col], anchor="center")
 
         self.tree.pack(pady=10, padx=10, fill="both", expand=True)
         self.tooltip = CellTooltip(self.tree)

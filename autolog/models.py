@@ -16,9 +16,27 @@ class WorklogEntry:
 
     _idx: int = 0
 
+    def __str__(self):
+        return (
+            f"{self.__class__.__name__}("
+            f"{self.raw_issue_key},"
+            f"{self.started},"
+            f"{self.status}"
+            ")"
+        )
+
 
 @dataclass
 class ProcessingResult:
     success: bool
     entry: WorklogEntry
     error: Exception = None
+
+    def __str__(self):
+        return (
+            f"{self.__class__.__name__}("
+            f"{self.success},"
+            f"{self.error},"
+            f"{self.entry}"
+            ")"
+        )

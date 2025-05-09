@@ -1,6 +1,7 @@
 """GUI logic"""
 
 import logging
+import os
 import threading
 import time
 import tkinter as tk
@@ -23,6 +24,10 @@ ctk.set_default_color_theme("blue")
 
 COOLDOWN_SEC = 2
 COOLDOWN_EVERY = 10
+
+DEBUG = True if os.environ.get("AUTOLOG_DEBUG", False) else False
+
+logging.basicConfig(level=logging.DEBUG if DEBUG else logging.INFO)
 logger = logging.getLogger(__file__)
 
 
@@ -376,9 +381,13 @@ class WorklogApp(ctk.CTk):
             ]
 
             total_entries = len(entries_to_process)
+            logger.debug(f"Total entries {total_entries}")
 
             for idx, entry in enumerate(entries_to_process):
                 self._update_status(f"{idx}/{total_entries}")
+                logger.debug(f"Processing entry {idx} {entry}")
+                result = self._process_single_entry(client, entry)
+                logger.debug(f"Results for entry {idx} {entry}: {result}")
                 result = self._process_single_entry(client, entry)
                 self._update_progress((idx + 1) / len(entries_to_process))
                 self._update_row_status(entry._idx, entry, result)

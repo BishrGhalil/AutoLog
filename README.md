@@ -22,10 +22,10 @@ cd AutoLog
 Set up your Python environment:
 
 ```bash
-python3 -m venv .venv
+python -m venv .venv
 source .venv/bin/activate
-python3 -m pip install --upgrade pip
-python3 -m pip install -r requirements.txt
+python -m pip install -r requirements.txt
+python main.py
 ```
 
 ---
@@ -62,13 +62,10 @@ python main.py
 
 ## Development
 
-Standard development steps:
-
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python3 -m pip install -r requirements.txt
-python main.py
+python3 -m pip install uv
+uv sync
+uv run main.py
 ```
 
 Run linters:
@@ -87,6 +84,7 @@ pyinstaller --noconfirm --clean autolog.spec
 
 ## Roadmap
 
+- [ ] Windows Executable
 - [ ] Code signing for Windows
 - [ ] Cooldown to not get blocked
 - [ ] Docker support

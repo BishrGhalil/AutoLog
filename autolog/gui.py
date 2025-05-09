@@ -1,6 +1,7 @@
 """GUI logic"""
 
 import threading
+import time
 import tkinter as tk
 from enum import Enum
 from pathlib import Path
@@ -18,6 +19,9 @@ from autolog.models import ProcessingResult, WorklogEntry
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
+
+COOLDOWN_SEC = 2
+COOLDOWN_EVERY = 10
 
 
 # Constants
@@ -349,11 +353,16 @@ class WorklogApp(ctk.CTk):
                 e for e in self.entries if e.status in ("pending", "failed")
             ]
 
+            total_entries = len(entries_to_process)
+
             for idx, entry in enumerate(entries_to_process):
                 result = self._process_single_entry(client, entry)
                 self._update_progress((idx + 1) / len(entries_to_process))
                 self._update_row_status(entry._idx, entry, result)
 
+                should_cooldown = idx % COOLDOWN_EVERY == 0
+                if idx != 0 and idx != total_entries and should_cooldown:
+                    time.sleep(COOLDOWN_SEC)
             self._show_results()
 
         except JIRAError as e:

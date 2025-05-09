@@ -305,7 +305,7 @@ class WorklogApp(ctk.CTk):
         self.entries = adapter.parse(file_path)
         for entry in self.entries:
             entry.status = "pending"
-            entry.raw_issue_key = IssueKeyParser.parse(entry.raw_issue_key)
+            entry.issue_key = IssueKeyParser.parse(entry.raw_issue_key)
         self._update_table()
 
     def _update_table(self) -> None:
@@ -319,7 +319,7 @@ class WorklogApp(ctk.CTk):
                 values=(
                     entry.started.strftime("%Y-%m-%d %H:%M"),
                     duration_str,
-                    entry.raw_issue_key or "⚠️ Missing",
+                    entry.issue_key or "⚠️ Missing",
                     STATUS_DISPLAY.get(entry.status, STATUS_DISPLAY["pending"]),
                     "",
                 ),
@@ -372,8 +372,6 @@ class WorklogApp(ctk.CTk):
         self, client: JiraClient, entry: WorklogEntry
     ) -> ProcessingResult:
         """Process a single worklog entry and return result."""
-        if not entry.issue_key:
-            entry.issue_key = IssueKeyParser.parse(entry.raw_issue_key)
 
         result = client.create_worklog(entry)
         entry.status = "success" if result.success else "failed"

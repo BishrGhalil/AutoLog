@@ -234,13 +234,26 @@ class WorklogApp(ctk.CTk):
 
     def _create_progress_controls(self) -> None:
         """Create progress bar and process button."""
-        self.progress = ctk.CTkProgressBar(self, height=10)
+
+        # Frame to hold progress components
+        progress_frame = ctk.CTkFrame(self)
+        progress_frame.pack(pady=5, padx=10, fill="x")
+
+        # Status label
+        self.status_label = ctk.CTkLabel(
+            progress_frame, text="Ready", anchor="center", font=("Arial", 14)
+        )
+        self.status_label.pack(fill="x", expand=True)
+
+        # ProgressBar
+        self.progress = ctk.CTkProgressBar(progress_frame, height=10)
         self.progress.set(0)
         self.progress.pack(pady=5, padx=10, fill="x")
 
         self.process_btn = ctk.CTkButton(
             self, text="Process", command=self._start_processing
         )
+        self.process_btn.configure(state="disabled")
         self.process_btn.pack(pady=10)
 
     def _setup_treeview(self) -> None:
@@ -309,11 +322,18 @@ class WorklogApp(ctk.CTk):
         """Load and display worklog entries from CSV."""
         adapter = CSVAdapter()
         self.entries = adapter.parse(file_path)
+        seconds = 0
         for idx, entry in enumerate(self.entries):
             entry.status = "pending"
             entry.issue_key = IssueKeyParser.parse(entry.raw_issue_key)
             entry._idx = idx
+            seconds += entry.duration
+
+        total_hours = f"{seconds // 3600}:{(seconds % 3600) // 60}"
+        self._update_status(f"Total: {total_hours}")
         self._update_table()
+
+        self.process_btn.configure(state="normal")
 
     def _update_table(self) -> None:
         """Refresh the results table with current entries."""
@@ -358,13 +378,17 @@ class WorklogApp(ctk.CTk):
             total_entries = len(entries_to_process)
 
             for idx, entry in enumerate(entries_to_process):
+                self._update_status(f"{idx}/{total_entries}")
                 result = self._process_single_entry(client, entry)
                 self._update_progress((idx + 1) / len(entries_to_process))
                 self._update_row_status(entry._idx, entry, result)
 
                 should_cooldown = idx % COOLDOWN_EVERY == 0
                 if idx != 0 and idx != total_entries and should_cooldown:
+                    self._update_status(f"Cooldowing for {COOLDOWN_SEC} seconds")
                     time.sleep(COOLDOWN_SEC)
+
+            self._update_progress(color="green")
             self._show_results()
 
         except JIRAError as e:
@@ -413,9 +437,17 @@ class WorklogApp(ctk.CTk):
         """Format error message for display."""
         return str(error.text) if isinstance(error, JIRAError) else str(error)
 
-    def _update_progress(self, value: float) -> None:
+    def _update_progress(self, value: float = None, color: str = None) -> None:
         """Update progress bar value."""
-        self.after(0, lambda: self.progress.set(value))
+
+        if value is not None:
+            self.after(0, lambda: self.progress.set(value))
+        if color is not None:
+            self.after(0, lambda: self.progress.configure(fg_color=color))
+
+    def _update_status(self, message: str) -> None:
+        """Update the status label text."""
+        self.after(0, lambda: self.status_label.configure(text=message))
 
     def _show_results(self) -> None:
         """Show final processing results summary."""

@@ -21,7 +21,8 @@ class JiraClient:
             return ProcessingResult(False, entry, ValueError("Missing issue key"))
 
         try:
-            issue = self.client.issue(entry.issue_key)
+            # issue = self.client.issue(entry.issue_key)
+            issue = entry.issue_key
             self.client.add_worklog(
                 issue=issue,
                 timeSpentSeconds=entry.duration,

@@ -161,6 +161,53 @@ class WorklogApp(ctk.CTk):
 
     def _create_results_table(self) -> None:
         """Create and configure the results treeview."""
+
+        input_bg_color = self._apply_appearance_mode(
+            ctk.ThemeManager.theme["CTkEntry"]["fg_color"]
+        )
+        frame_bg_color = self._apply_appearance_mode(
+            ctk.ThemeManager.theme["CTkFrame"]["fg_color"]
+        )
+        text_color = self._apply_appearance_mode(
+            ctk.ThemeManager.theme["CTkLabel"]["text_color"]
+        )
+        selected_color = self._apply_appearance_mode(
+            ctk.ThemeManager.theme["CTkFrame"]["fg_color"]
+        )
+
+        treestyle = ttk.Style()
+        treestyle.theme_use("default")
+
+        # Configure main Treeview style
+        treestyle.configure(
+            "Treeview",
+            background=frame_bg_color,
+            foreground=text_color,
+            fieldbackground=frame_bg_color,
+            borderwidth=0,
+        )
+
+        # Configure Treeview heading style
+        treestyle.configure(
+            "Treeview.Heading",
+            background=input_bg_color,
+            foreground=text_color,
+            padding=(16, 8),
+            borderwidth=0,
+        )
+
+        # Configure style maps
+        treestyle.map(
+            "Treeview",
+            forground=[("selected", frame_bg_color)],
+            background=[("selected", selected_color)],
+        )
+
+        treestyle.map(
+            "Treeview.Heading",
+            background=[("active", selected_color)],
+        )
+
         columns = ("Started", "Duration", "Issue", "Status", "Error")
         self.tree = ttk.Treeview(self, columns=columns, show="headings")
 
@@ -181,7 +228,7 @@ class WorklogApp(ctk.CTk):
 
     def _create_progress_controls(self) -> None:
         """Create progress bar and process button."""
-        self.progress = ctk.CTkProgressBar(self)
+        self.progress = ctk.CTkProgressBar(self, height=10)
         self.progress.set(0)
         self.progress.pack(pady=5, padx=10, fill="x")
 

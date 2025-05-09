@@ -258,6 +258,7 @@ class WorklogApp(ctk.CTk):
         self.entries = adapter.parse(file_path)
         for entry in self.entries:
             entry.status = "pending"
+            entry.raw_issue_key = IssueKeyParser.parse(entry.raw_issue_key)
         self._update_table()
 
     def _update_table(self) -> None:

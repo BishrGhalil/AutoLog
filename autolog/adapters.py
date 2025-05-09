@@ -5,7 +5,6 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
 
-from autolog.issue_parser import IssueKeyParser
 from autolog.models import WorklogEntry
 
 
@@ -29,7 +28,7 @@ class CSVAdapter(DataAdapter):
                         duration=int(row["Duration"]),
                         description=row.get("Description", ""),
                         activity=row["Activity"],
-                        raw_issue_key=IssueKeyParser.parse(row["Activity"]),
+                        raw_issue_key=row["Activity"],
                     )
                 )
         return entries

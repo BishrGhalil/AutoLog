@@ -303,9 +303,10 @@ class WorklogApp(ctk.CTk):
         """Load and display worklog entries from CSV."""
         adapter = CSVAdapter()
         self.entries = adapter.parse(file_path)
-        for entry in self.entries:
+        for idx, entry in enumerate(self.entries):
             entry.status = "pending"
             entry.issue_key = IssueKeyParser.parse(entry.raw_issue_key)
+            entry._idx = idx
         self._update_table()
 
     def _update_table(self) -> None:
@@ -351,7 +352,7 @@ class WorklogApp(ctk.CTk):
             for idx, entry in enumerate(entries_to_process):
                 result = self._process_single_entry(client, entry)
                 self._update_progress((idx + 1) / len(entries_to_process))
-                self._update_row_status(entry, result)
+                self._update_row_status(entry._idx, entry, result)
 
             self._show_results()
 
@@ -382,9 +383,10 @@ class WorklogApp(ctk.CTk):
 
         return result
 
-    def _update_row_status(self, entry: WorklogEntry, result: ProcessingResult) -> None:
+    def _update_row_status(
+        self, idx: int, entry: WorklogEntry, result: ProcessingResult
+    ) -> None:
         """Update UI row with processing result."""
-        idx = self.entries.index(entry)
         row = self.tree.get_children()[idx]
         status = STATUS_DISPLAY["success" if result.success else "failed"]
 

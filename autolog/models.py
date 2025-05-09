@@ -14,6 +14,8 @@ class WorklogEntry:
     issue_key: str = None
     status: str = "pending"
 
+    _idx: int = 0
+
 
 @dataclass
 class ProcessingResult:

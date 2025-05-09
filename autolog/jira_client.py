@@ -4,6 +4,8 @@ from jira import JIRA, JIRAError
 
 from autolog.models import ProcessingResult, WorklogEntry
 
+JIRA_TIMEOUT = 20
+
 
 class JiraClient:
     def __init__(self, base_url: str, email: str, api_key: str):
@@ -13,7 +15,12 @@ class JiraClient:
         self.client: JIRA | None = None
 
     def connect(self):
-        self.client = JIRA(server=self.base_url, basic_auth=(self.email, self.api_key))
+        self.client = JIRA(
+            server=self.base_url,
+            basic_auth=(self.email, self.api_key),
+            timeout=JIRA_TIMEOUT,
+            async_=True,
+        )
         return self.client
 
     def create_worklog(self, entry: WorklogEntry) -> ProcessingResult:
@@ -31,6 +38,4 @@ class JiraClient:
             )
             return ProcessingResult(True, entry)
         except JIRAError as e:
-            return ProcessingResult(False, entry, e)
-        except Exception as e:
             return ProcessingResult(False, entry, e)

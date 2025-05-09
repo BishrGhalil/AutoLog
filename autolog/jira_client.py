@@ -4,7 +4,7 @@ from jira import JIRA, JIRAError
 
 from autolog.models import ProcessingResult, WorklogEntry
 
-JIRA_TIMEOUT = 20
+JIRA_TIMEOUT = 60
 
 
 class JiraClient:

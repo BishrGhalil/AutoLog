@@ -86,7 +86,7 @@ pyinstaller --noconfirm --clean autolog.spec
 
 - [ ] Windows Executable
 - [ ] Code signing for Windows
-- [ ] Cooldown to not get blocked
+- [X] Cooldown to not get blocked
 - [ ] Docker support
 - [ ] Support for Excel data sources
 

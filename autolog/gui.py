@@ -254,6 +254,9 @@ class WorklogApp(ctk.CTk):
         self.progress = ctk.CTkProgressBar(progress_frame, height=10)
         self.progress.set(0)
         self.progress.pack(pady=5, padx=10, fill="x")
+        self.progress_color = self._apply_appearance_mode(
+            ctk.ThemeManager.theme["CTkProgressBar"]["progress_color"]
+        )
 
         self.process_btn = ctk.CTkButton(
             self, text="Process", command=self._start_processing
@@ -371,8 +374,13 @@ class WorklogApp(ctk.CTk):
     def _process_entries(self) -> None:
         """Process entries through Jira API (run in background thread)."""
         try:
+            self._update_progress(0, self.progress_color)
+            self._update_status("Connecting to Jira...")
+
             client = JiraClient(*self.credentials_frame.credentials)
             client.connect()
+
+            self._update_status("Setting things up...")
 
             self.results.clear()
             self.failed_entries.clear()
@@ -383,21 +391,22 @@ class WorklogApp(ctk.CTk):
             total_entries = len(entries_to_process)
             logger.debug(f"Total entries {total_entries}")
 
-            for idx, entry in enumerate(entries_to_process):
+            for idx, entry in enumerate(entries_to_process, 1):
                 self._update_status(f"{idx}/{total_entries}")
                 logger.debug(f"Processing entry {idx} {entry}")
                 result = self._process_single_entry(client, entry)
                 logger.debug(f"Results for entry {idx} {entry}: {result}")
                 result = self._process_single_entry(client, entry)
-                self._update_progress((idx + 1) / len(entries_to_process))
+                self._update_progress((idx) / len(entries_to_process))
                 self._update_row_status(entry._idx, entry, result)
 
                 should_cooldown = idx % COOLDOWN_EVERY == 0
-                if idx != 0 and idx != total_entries and should_cooldown:
+                if idx != total_entries and should_cooldown:
                     self._update_status(f"Cooldowing for {COOLDOWN_SEC} seconds")
                     time.sleep(COOLDOWN_SEC)
 
             self._update_progress(color="green")
+            self._update_status("Finished")
             self._show_results()
 
         except JIRAError as e:
@@ -406,6 +415,7 @@ class WorklogApp(ctk.CTk):
                 0, lambda: messagebox.showerror("Error", f"An error occurred: {error}")
             )
             logger.error(e)
+            self._update_progress(color="red")
 
         except Exception as e:
             error = str(e)
@@ -413,8 +423,12 @@ class WorklogApp(ctk.CTk):
                 0, lambda: messagebox.showerror("Error", f"An error occurred: {error}")
             )
             logger.exception(e)
+            self._update_progress(color="red")
+
         finally:
             self.after(0, lambda: self.process_btn.configure(state="normal"))
+            self._update_progress(0, self.progress_color)
+            self._update_status("")
 
     def _process_single_entry(
         self, client: JiraClient, entry: WorklogEntry
@@ -452,7 +466,7 @@ class WorklogApp(ctk.CTk):
         if value is not None:
             self.after(0, lambda: self.progress.set(value))
         if color is not None:
-            self.after(0, lambda: self.progress.configure(fg_color=color))
+            self.after(0, lambda: self.progress.configure(progress_color=color))
 
     def _update_status(self, message: str) -> None:
         """Update the status label text."""

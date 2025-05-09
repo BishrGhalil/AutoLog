@@ -15,19 +15,7 @@ a = Analysis(
     binaries=[],
     datas=[
         # Application data files
-        ('autolog/*', 'autolog'),
-        
-        # Collect CustomTkinter resources
-        *collect_data_files('customtkinter', include_py_files=True),
-        
-        # Collect JIRA dependencies
-        *collect_data_files('jira'),
-
-        # Collect AioHTTP dependencies
-        *collect_data_files('aiohttp'),
-
-        # Collect Keyring dependencies
-        *collect_data_files('keyring'),
+        # ('autolog/*', 'autolog'),
     ],
     hiddenimports=[
         'jira',

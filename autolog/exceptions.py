@@ -1,0 +1,2 @@
+class DuplicateWorklogError(Exception):
+    pass

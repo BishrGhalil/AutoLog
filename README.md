@@ -5,7 +5,7 @@
 ## Prerequisites
 
 - Python 3.10+
-- Jira account with appropriate API access
+- Jira account with appropriate [API access](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/#Create-an-API-token)
 - CSV file formatted according to the expected schema ([see below](#csv-format))
 
 ---
@@ -71,7 +71,7 @@ uv run main.py
 Run linters:
 
 ```bash
-ruff .
+ruff check .
 ```
 
 Build executable:
@@ -84,11 +84,10 @@ pyinstaller --noconfirm --clean autolog.spec
 
 ## Roadmap
 
+- [X] Cooldown
 - [ ] Windows Executable
 - [ ] Code signing for Windows
-- [X] Cooldown to not get blocked
-- [ ] Docker support
-- [ ] Support for Excel data sources
+- [ ] Async requests
 
 ---
 

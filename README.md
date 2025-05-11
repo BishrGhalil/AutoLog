@@ -2,6 +2,8 @@
 
 **AutoLog** is a tool that automates the process of logging work entries into Jira from various data sources. Currently, the only supported data source is **CSV**, with support for additional sources planned for future releases.
 
+<img src="assets/ui.png" alt="UI" width="70%"/>
+
 ## Prerequisites
 
 - Python 3.10+

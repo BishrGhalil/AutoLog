@@ -33,6 +33,7 @@ jobs:
       # Extract version from pyproject.toml
       - name: Read version
         id: get_version
+        shell: bash
         run: |
           python - <<'EOF'
           import tomllib
@@ -55,6 +56,7 @@ jobs:
 
       # --- decode the PFX into a file ---
       - name: Restore code-signing certificate
+        shell: bash
         run: |
           mkdir cert
           echo "${{ secrets.PFX_CERT }}" > cert/pfx.b64
@@ -62,6 +64,7 @@ jobs:
 
       # --- sign your executable ---
       - name: Sign executable
+        shell: bash
         run: |
           $signtool = "C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe"
           & $signtool sign `

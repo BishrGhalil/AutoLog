@@ -13,6 +13,7 @@ JIRA_TIMEOUT = 60
 
 logger = logging.getLogger(__file__)
 
+
 class JiraClient:
     def __init__(
         self, base_url: str, email: str, api_key: str, prevent_duplicates: bool = True
@@ -68,7 +69,9 @@ class JiraClient:
                 for jira_worklog in cached:
                     cached_entry = self._convert_jira_worklog(jira_worklog)
                     if entry == cached_entry:
-                        logging.warn(f"Duplicate worklog entry:{entry} conflicts with {cached_entry}")
+                        logging.warn(
+                            f"Duplicate worklog:{entry} conflicts with {cached_entry}"
+                        )
                         return ProcessingResult(
                             False,
                             entry,

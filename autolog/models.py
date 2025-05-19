@@ -54,7 +54,7 @@ class WorklogEntry:
             and self_start.minute == other_start.minute
         )
 
-        duration_match = (self.duration == other.duration)
+        duration_match = self.duration == other.duration
 
         # Normalize comments
         def clean_text(text: str) -> str:

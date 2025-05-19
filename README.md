@@ -91,6 +91,7 @@ python main.py
 ```bash
 python3 -m pip install uv
 uv sync
+pre-commit install
 uv run main.py
 ```
 

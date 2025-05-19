@@ -26,7 +26,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.12'
 
       # Extract version from pyproject.toml
       - name: Read version
@@ -71,8 +71,8 @@ jobs:
         env:
           SIGNTOOL_DIR: ${{ steps.signtool.outputs.signtool-x64 }}
           PFX_PASS: ${{ secrets.PFX_PASS }}
-          run: |
-            & "$env:SIGNTOOL_DIR\signtool.exe" sign /fd SHA256 /f cert\code_sign.pfx /p $env:PFX_PASS /tr http://timestamp.digicert.com /td SHA256 dist\AutoLog.exe
+        run: |
+          & "$env:SIGNTOOL_DIR\signtool.exe" sign /fd SHA256 /f cert\code_sign.pfx /p $env:PFX_PASS /tr http://timestamp.digicert.com /td SHA256 dist\AutoLog.exe
 
       # Create Git tag for this version
       - name: Tag version

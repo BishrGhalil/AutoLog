@@ -35,9 +35,9 @@ jobs:
         id: get_version
         run: |
           python - <<'EOF'
-          import tomli
-          data = tomli.loads(open("pyproject.toml", "rb").read())
-          version = data.get("tool", {}).get("poetry", {}).get("version")
+          import tomllib
+          data = tomllib.load(open("pyproject.toml", "rb"))
+          version = data.get("project", {}).get("version")
           if not version:
               raise SystemExit("Cannot find version in pyproject.toml")
           print(f"::set-output name=VERSION::{version}")

@@ -33,14 +33,16 @@ jobs:
         id: get_version
         shell: bash
         run: |
-          python - <<'EOF'
+          VERSION=$(python - <<'EOF'
           import tomllib
           data = tomllib.load(open("pyproject.toml", "rb"))
           version = data.get("project", {}).get("version")
           if not version:
               raise SystemExit("Cannot find version in pyproject.toml")
-          echo "VERSION={version}" >> $GITHUB_OUTPUT
-          EOF
+          print(version)
+          EOF)
+
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       # Placeholder for running tests
       # - name: Run tests

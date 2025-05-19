@@ -58,6 +58,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     name='AutoLog',
+    version="version.txt",
     debug=False,
     bootloader_ignore_signals=False,
     strip=True,
@@ -71,8 +72,3 @@ exe = EXE(
     entitlements_file=None,
     icon='assets/icon.ico' if os.path.exists('assets/icon.ico') else None,
 )
-
-# Additional optimizations for Windows
-if sys.platform == 'win32':
-    exe = exe.to_win32pe(exe)
-    logger.info("Applying Windows PE optimizations")

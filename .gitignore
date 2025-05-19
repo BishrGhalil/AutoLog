@@ -10,3 +10,4 @@ wheels/
 .venv
 .vscode/launch.json
 *.log
+certificate.pfx

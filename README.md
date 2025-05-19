@@ -1,8 +1,32 @@
-# AutoLog
+<div align="center">
+  <a href="https://github.com/BishrGhalil/AutoLog">
+    <img alt="AutoLog.Logo" width="200" height="200" src="./assets/icon.png">
+  </a>
+  <h1>AutoLog</h1>
+  <p>
+    automates the process of logging work entries into Jira.
+  </p>
+  <a href="https://github.com/BishrGhalil/AutoLog/releases/latest">
+    <img src="https://img.shields.io/github/v/release/BishrGhalil/AutoLog">
+  </a>
+  <a href="https://github.com/BishrGhalil/AutoLog/releases/latest">
+    <img src="https://img.shields.io/github/release-date/BishrGhalil/AutoLog">
+  </a>
+  <a href="https://github.com/BishrGhalil/AutoLog/tree/dev">
+    <img src="https://img.shields.io/github/last-commit/BishrGhalil/AutoLog">
+  </a>
+  <a href="https://github.com/BishrGhalil/AutoLog/releases/">
+    <img src="https://img.shields.io/github/downloads/BishrGhalil/AutoLog/total">
+  <a href="https://github.com/BishrGhalil/AutoLog/blob/dev/LICENSE">
+    <img src="https://img.shields.io/github/license/BishrGhalil/AutoLog">
+  </a>
+</div>
 
+
+## About
 **AutoLog** is a tool that automates the process of logging work entries into Jira from various data sources. Currently, the only supported data source is **CSV**, with support for additional sources planned for future releases.
 
-<img src="assets/ui.png" alt="UI" width="70%"/>
+<img src=".github/ui.png" alt="UI" width="70%"/>
 
 ## Prerequisites
 
@@ -82,13 +106,15 @@ Build executable:
 pyinstaller --noconfirm --clean autolog.spec
 ```
 
+[Signing the executable](https://gist.github.com/PaulCreusy/7fade8d5a8026f2228a97d31343b335e)
+
 ---
 
 ## Roadmap
 
 - [X] Cooldown
-- [ ] Windows Executable
-- [ ] Code signing for Windows
+- [X] Windows Executable
+- [X] Code signing for Windows
 - [ ] Async requests
 
 ---

@@ -1,0 +1,90 @@
+name: Build & Release AutoLog
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version from pyproject.toml (overrides file)'
+        required: false
+      run_tests:
+        description: 'Run tests before build'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write   # needed for creating tags/releases
+
+jobs:
+  build_and_release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # Extract version from pyproject.toml
+      - name: Read version
+        id: get_version
+        run: |
+          python - <<'EOF'
+          import tomli
+          data = tomli.loads(open("pyproject.toml", "rb").read())
+          version = data.get("tool", {}).get("poetry", {}).get("version")
+          if not version:
+              raise SystemExit("Cannot find version in pyproject.toml")
+          print(f"::set-output name=VERSION::{version}")
+          EOF
+
+      # Placeholder for running tests
+      # - name: Run tests
+      #   run: pytest
+
+      - name: Build executable
+        run: |
+          uv
+          uv sync
+          uv run pyinstaller --noconfirm --clean autolog.spec
+
+      # --- decode the PFX into a file ---
+      - name: Restore code-signing certificate
+        run: |
+          mkdir cert
+          echo "${{ secrets.PFX_CERT }}" > cert/pfx.b64
+          certutil -decode cert/pfx.b64 cert/code_sign.pfx
+
+      # --- sign your executable ---
+      - name: Sign executable
+        run: |
+          $signtool = "C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe"
+          & $signtool sign `
+            /fd SHA256 `
+            /f cert\code_sign.pfx `
+            /p "${{ secrets.PFX_PASS }}" `
+            /tr http://timestamp.digicert.com `
+            /td SHA256 `
+            dist\AutoLog.exe
+
+      # Create Git tag for this version
+      - name: Tag version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag v${{ steps.get_version.outputs.VERSION }}
+          git push origin v${{ steps.get_version.outputs.VERSION }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
+          name: Release v${{ steps.get_version.outputs.VERSION }}
+          files: dist/AutoLog.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

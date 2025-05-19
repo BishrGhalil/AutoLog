@@ -48,11 +48,12 @@ class WorklogEntry:
 
     def __eq__(self, other: "WorklogEntry"):
         self_start = self.normalized_start_utc()
+        self_start.replace(second=0, microsecond=0)
+
         other_start = other.normalized_start_utc()
-        time_match = (
-            self_start.hour == other_start.hour
-            and self_start.minute == other_start.minute
-        )
+        other_start.replace(second=0, microsecond=0)
+
+        time_match = self_start == other_start
 
         duration_match = self.duration == other.duration
 

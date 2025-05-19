@@ -39,20 +39,8 @@ jobs:
           version = data.get("project", {}).get("version")
           if not version:
               raise SystemExit("Cannot find version in pyproject.toml")
-          print(f"::set-output name=VERSION::{version}")
+          echo "VERSION={version}" >> $GITHUB_OUTPUT
           EOF
-
-      - name: Add SignTool to PATH
-        uses: KamaranL/add-signtool-action@v1
-        id: signtool
-
-      # --- decode the PFX into a file ---
-      - name: Restore code-signing certificate
-        shell: bash
-        run: |
-          mkdir cert
-          echo "${{ secrets.PFX_CERT }}" > cert/pfx.b64
-          certutil -decode cert/pfx.b64 cert/code_sign.pfx
 
       # Placeholder for running tests
       # - name: Run tests
@@ -66,13 +54,16 @@ jobs:
           uv run pyinstaller --noconfirm --clean autolog.spec
 
       # --- sign the executable ---
-      - name: Sign executable
-        shell: pwsh
-        env:
-          SIGNTOOL_DIR: ${{ steps.signtool.outputs.signtool-x64 }}
-          PFX_PASS: ${{ secrets.PFX_PASS }}
-        run: |
-          & "$env:SIGNTOOL_DIR\signtool.exe" sign /fd SHA256 /f cert\code_sign.pfx /p $env:PFX_PASS /tr http://timestamp.digicert.com /td SHA256 dist\AutoLog.exe
+      - name: Code-sign artifacts
+        uses: skymatic/code-sign-action@v1
+        with:
+          certificate:    ${{ secrets.PFX_CERT }}    # base64-encoded .pfx
+          password:       ${{ secrets.PFX_PASS }}
+          certificatesha1: ${{ secrets.CERTHASH }}   # to ensure the cert matches
+          description:    'AutoLog Windows App'
+          timestampUrl:   'http://timestamp.digicert.com'
+          folder:         'dist'                     # sign everything under dist/
+          recursive:      true
 
       # Create Git tag for this version
       - name: Tag version

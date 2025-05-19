@@ -1,6 +1,6 @@
 [project]
 name = "autolog"
-version = "1.0.0"
+version = "1.0.1"
 description = "automates the process of logging work entries into Jira"
 readme = "README.md"
 requires-python = ">=3.10"

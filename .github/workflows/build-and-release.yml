@@ -6,9 +6,6 @@ on:
       - master
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version from pyproject.toml (overrides file)'
-        required: false
       run_tests:
         description: 'Run tests before build'
         required: false

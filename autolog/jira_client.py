@@ -1,5 +1,6 @@
 """Jira API interaction"""
 
+import logging
 from datetime import datetime
 
 import pytz
@@ -10,6 +11,7 @@ from autolog.models import ProcessingResult, WorklogEntry
 
 JIRA_TIMEOUT = 60
 
+logger = logging.getLogger(__file__)
 
 class JiraClient:
     def __init__(
@@ -66,6 +68,7 @@ class JiraClient:
                 for jira_worklog in cached:
                     cached_entry = self._convert_jira_worklog(jira_worklog)
                     if entry == cached_entry:
+                        logging.warn(f"Duplicate worklog entry:{entry} conflicts with {cached_entry}")
                         return ProcessingResult(
                             False,
                             entry,

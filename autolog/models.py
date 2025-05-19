@@ -26,6 +26,7 @@ class WorklogEntry:
             f"{self.__class__.__name__}("
             f"{self.raw_issue_key},"
             f"{self.started},"
+            f"{self.duration},"
             f"{self.status}"
             ")"
         )
@@ -53,13 +54,15 @@ class WorklogEntry:
             and self_start.minute == other_start.minute
         )
 
+        duration_match = (self.duration == other.duration)
+
         # Normalize comments
         def clean_text(text: str) -> str:
             return re.sub(r"\s+", " ", text.strip().lower())
 
         comment_match = clean_text(self.description) == clean_text(other.description)
 
-        return time_match and comment_match
+        return time_match and comment_match and duration_match
 
 
 @dataclass

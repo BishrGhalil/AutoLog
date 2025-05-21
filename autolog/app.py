@@ -10,7 +10,15 @@ from typing import List, Optional
 import customtkinter as ctk
 from jira.exceptions import JIRAError
 
-from autolog.constants import STATUS_DISPLAY, TABLE_COLUMN_WIDTHS, ColumnID
+from autolog.constants import (
+    APP_HEIGHT,
+    APP_MIN_HEIGHT,
+    APP_MIN_WIDTH,
+    APP_WIDTH,
+    STATUS_DISPLAY,
+    TABLE_COLUMN_WIDTHS,
+    ColumnID,
+)
 from autolog.keyring_manager import CredentialManager
 from autolog.models import ProcessingResult, WorklogEntry
 from autolog.widgets import (
@@ -33,7 +41,8 @@ class WorklogApp(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Jira AutoLog")
-        self.geometry("1200x700")
+        self.minsize(width=APP_MIN_WIDTH, height=APP_MIN_HEIGHT)
+        self.geometry(f"{APP_WIDTH}x{APP_HEIGHT}")
         self.entries: List[WorklogEntry] = []
         self.editing_entry: Optional[ctk.CTkEntry] = None
         self.processor: Optional[WorklogProcessor] = None

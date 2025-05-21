@@ -1,6 +1,12 @@
 from enum import Enum
 from typing import Dict
 
+APP_WIDTH = 800
+APP_HEIGHT = 600
+
+APP_MIN_WIDTH = 650
+APP_MIN_HEIGHT = 500
+
 COOLDOWN_SEC: float = 2.0
 COOLDOWN_EVERY: int = 10
 

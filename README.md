@@ -29,15 +29,17 @@
 <img src=".github/ui.png" alt="UI" width="70%"/>
 
 ## Prerequisites
-
-- Python 3.10+
 - Jira account with appropriate [API access](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/#Create-an-API-token)
 - CSV file formatted according to the expected schema ([see below](#csv-format))
 
 ---
 
-## Installation & Setup
+# Usage:
 
+## Download
+You may download the executable from the [releases page](https://github.com/BishrGhalil/AutoLog/releases)
+
+## Run from source code
 Clone the repository:
 
 ```bash

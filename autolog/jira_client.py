@@ -1,15 +1,15 @@
 """Jira API interaction"""
 
 import logging
-from datetime import datetime
 
 import pytz
+from dateutil import parser
 from jira import JIRA, JIRAError
 
 from autolog.exceptions import DuplicateWorklogError
 from autolog.models import ProcessingResult, WorklogEntry
 
-JIRA_TIMEOUT = 60
+JIRA_TIMEOUT = 30
 
 logger = logging.getLogger(__file__)
 
@@ -36,7 +36,7 @@ class JiraClient:
 
     def _convert_jira_worklog(self, worklog) -> WorklogEntry:
         """Convert JIRA worklog to our model with UTC timezone"""
-        started = datetime.strptime(worklog.started, "%Y-%m-%dT%H:%M:%S.%f%z")
+        started = parser.parse(worklog.started)
         return WorklogEntry(
             activity=worklog.issueId,
             started=started,

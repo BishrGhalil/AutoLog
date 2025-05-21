@@ -1,11 +1,15 @@
 """Data input adapters"""
 
 import csv
+import logging
 from abc import ABC, abstractmethod
-from datetime import datetime
 from pathlib import Path
 
+from dateutil import parser
+
 from autolog.models import WorklogEntry
+
+logger = logging.getLogger(__file__)
 
 
 class DataAdapter(ABC):
@@ -21,14 +25,19 @@ class CSVAdapter(DataAdapter):
             reader = csv.DictReader(f)
             for row in reader:
                 datetime_str = f"{row['Date']} {row['From']}"
-                started = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
-                entries.append(
-                    WorklogEntry(
-                        started=started,
-                        duration=int(row["Duration"]),
-                        description=row.get("Description", ""),
-                        activity=row["Activity"],
-                        raw_issue_key=row["Activity"],
+                try:
+                    started = parser.parse(datetime_str)
+                except Exception as e:
+                    logger.exception(e)
+                    continue
+                else:
+                    entries.append(
+                        WorklogEntry(
+                            started=started,
+                            duration=int(row["Duration"]),
+                            description=row.get("Description", ""),
+                            activity=row["Activity"],
+                            raw_issue_key=row["Activity"],
+                        )
                     )
-                )
         return entries

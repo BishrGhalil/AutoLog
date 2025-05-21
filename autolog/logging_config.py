@@ -3,6 +3,8 @@ import os
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
+LOGGING_FILE = Path.home() / os.environ.get("LOG_FILE", ".autolog.log")
+
 
 def setup_logging():
     """
@@ -34,8 +36,7 @@ def setup_logging():
         logger.addHandler(console_handler)
 
     # File handler
-    home_dir = Path.home()
-    log_file = home_dir / os.environ.get("LOG_FILE", ".autolog.log")
+    log_file = LOGGING_FILE
     file_handler = RotatingFileHandler(
         log_file, maxBytes=10485760, backupCount=1
     )  # 10MB per file, keep 5 backups

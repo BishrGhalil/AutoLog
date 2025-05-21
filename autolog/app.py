@@ -20,6 +20,7 @@ from autolog.constants import (
     ColumnID,
 )
 from autolog.keyring_manager import CredentialManager
+from autolog.logging_config import LOGGING_FILE
 from autolog.models import ProcessingResult, WorklogEntry
 from autolog.widgets import (
     CellTooltip,
@@ -192,10 +193,16 @@ class WorklogApp(ctk.CTk):
             self.credentials_frame.credentials,
             self.options_frame.selected_timezone,
         )
-        self.entries, total_hours = self.processor.load_entries(file_path)
-        self._update_status(f"Total: {total_hours}")
-        self._update_table()
-        self.process_btn.configure(state="normal")
+        try:
+            self.entries, total_hours = self.processor.load_entries(file_path)
+        except Exception as e:
+            err_str = str(e)
+            self._update_status("Failed Loading Entries")
+            self._show_error("Error", f"Failed Loading Entries\n{err_str}")
+        else:
+            self._update_status(f"Total: {total_hours}")
+            self._update_table()
+            self.process_btn.configure(state="normal")
 
     def _update_table(self) -> None:
         """Refresh the treeview with current entries."""
@@ -217,7 +224,7 @@ class WorklogApp(ctk.CTk):
     def _start_processing(self) -> None:
         """Validate credentials and start processing in a background thread."""
         if not all(self.credentials_frame.credentials):
-            messagebox.showerror("Error", "Please fill all credentials fields")
+            self._show_error("Error", "Please fill all credentials fields")
             return
         CredentialManager.save_credentials(*self.credentials_frame.credentials)
         self.process_btn.configure(state="disabled")
@@ -247,10 +254,10 @@ class WorklogApp(ctk.CTk):
             self._show_results()
 
         except JIRAError as e:
-            messagebox.showerror("Error", f"Jira error: {e.text}")
+            self._show_error("Error", f"Jira error: {e.text}")
             self._update_progress(color="red")
         except Exception as e:
-            messagebox.showerror("Error", f"Unexpected error: {e}")
+            self._show_error("Error", f"Unexpected error: {e}")
             self._update_progress(color="red")
         finally:
             self.process_btn.configure(state="normal")
@@ -294,3 +301,14 @@ class WorklogApp(ctk.CTk):
             else f"Successfully posted {success_count}/{total} worklogs"
         )
         messagebox.showinfo("Processing Complete", message)
+
+    def _show_error(self, title, message, **options):
+        detail = options.pop("detail", None)
+        logfile_msg = f"Log file:\n{LOGGING_FILE}"
+
+        if not detail:
+            detail = logfile_msg
+        else:
+            detail += f"\n{logfile_msg}"
+
+        messagebox.showerror(title, message, detail=detail, **options)

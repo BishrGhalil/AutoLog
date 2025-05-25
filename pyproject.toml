@@ -1,6 +1,6 @@
 [project]
 name = "autolog"
-version = "1.1.0"
+version = "1.2.0"
 description = "automates the process of logging work entries into Jira"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -17,12 +17,21 @@ dependencies = [
 dev = [
     "autoflake>=2.3.1",
     "black>=25.1.0",
+    "commitizen>=4.8.2",
     "isort>=6.0.1",
     "pre-commit>=4.2.0",
     "pyinstaller>=6.13.0",
     "ruff>=0.11.8",
 ]
 
+[tool.commitizen]
+name = "cz_conventional_commits"
+update_changelog_on_bump = true
+version = "1.2.0"
+version_files = [
+    "pyproject.toml:version",
+    "__version__.py"
+]
 
 [tool.black]
 line-length = 88

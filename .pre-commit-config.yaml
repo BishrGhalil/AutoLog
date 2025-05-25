@@ -26,5 +26,12 @@ repos:
         args: ["--fix"]
         language_version: python3.12
 
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: master
+    hooks:
+      - id: commitizen
+      - id: commitizen-branch
+        stages: [pre-push]
+
 
 default_stages: [pre-commit, pre-push]

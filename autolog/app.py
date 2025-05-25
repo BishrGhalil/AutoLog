@@ -3,6 +3,7 @@
 import logging
 import threading
 import tkinter as tk
+import webbrowser
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 from typing import List, Optional
@@ -10,6 +11,7 @@ from typing import List, Optional
 import customtkinter as ctk
 from jira.exceptions import JIRAError
 
+from autolog import __version__
 from autolog.constants import (
     APP_HEIGHT,
     APP_MIN_HEIGHT,
@@ -23,6 +25,7 @@ from autolog.keyring_manager import CredentialManager
 from autolog.logging_config import LOGGING_FILE
 from autolog.models import ProcessingResult, WorklogEntry
 from autolog.parsers.file_parsers import get_supported_formats
+from autolog.update_helpers import get_latest_release_info, is_update_available
 from autolog.widgets import (
     CellTooltip,
     CredentialsFrame,
@@ -51,6 +54,8 @@ class WorklogApp(ctk.CTk):
         self._create_widgets()
         self._load_credentials()
         self._setup_treeview()
+
+        self.after(100, self._check_for_updates)
 
     def _create_widgets(self) -> None:
         """Initialize and arrange all UI components."""
@@ -321,3 +326,32 @@ class WorklogApp(ctk.CTk):
             detail += f"\n{logfile_msg}"
 
         messagebox.showerror(title, message, detail=detail, **options)
+
+    def _check_for_updates(self) -> None:
+        """
+        In a background thread, fetch the latest release.
+        If newer than __version__, prompt the user with Update / Ignore.
+        """
+
+        def _worker():
+            try:
+                info = get_latest_release_info("Bishrghalil/Autolog")
+                if is_update_available(__version__, info["version"]):
+                    # run prompt on the main thread
+                    def _prompt():
+                        msg = (
+                            f"A new version {info['version']} is available.\n\n"
+                            "Release notes:\n"
+                            f"{info['changelog']}\n\n"
+                            "View release page?"
+                        )
+                        if messagebox.askyesno(
+                            "Update Available", msg, icon=messagebox.INFO
+                        ):
+                            webbrowser.open(info["url"])
+
+                    self.after(0, _prompt)
+            except Exception as e:
+                logger.exception("Update check failed: %s", e)
+
+        threading.Thread(target=_worker, daemon=True).start()

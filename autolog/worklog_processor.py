@@ -6,12 +6,12 @@ from typing import Callable, List, Tuple
 import pytz
 from jira.exceptions import JIRAError
 
-from autolog.adapters import CSVAdapter
 from autolog.constants import COOLDOWN_EVERY, COOLDOWN_SEC
 from autolog.exceptions import DuplicateWorklogError
-from autolog.issue_parser import IssueKeyParser
 from autolog.jira_client import JiraClient
 from autolog.models import ProcessingResult, WorklogEntry
+from autolog.parsers.issue_parser import IssueKeyParser
+from autolog.providers.factory import select_provider
 
 logger = logging.getLogger(__file__)
 
@@ -28,10 +28,10 @@ class WorklogProcessor:
         self.failed_entries: List[ProcessingResult] = []
         self.total: int = 0
 
-    def load_entries(self, file_path: Path) -> List[WorklogEntry]:
+    def load_entries(self, file_path: Path, provider: str) -> List[WorklogEntry]:
         """Load and preprocess worklog entries from a CSV file."""
-        adapter = CSVAdapter()
-        entries = adapter.parse(file_path)
+        provider = select_provider(name=provider, file_path=file_path)
+        entries = provider.parse()
         total_seconds = 0
         for idx, entry in enumerate(entries):
             entry.status = "pending"

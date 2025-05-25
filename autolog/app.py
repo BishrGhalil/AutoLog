@@ -22,6 +22,7 @@ from autolog.constants import (
 from autolog.keyring_manager import CredentialManager
 from autolog.logging_config import LOGGING_FILE
 from autolog.models import ProcessingResult, WorklogEntry
+from autolog.parsers.file_parsers import get_supported_formats
 from autolog.widgets import (
     CellTooltip,
     CredentialsFrame,
@@ -182,7 +183,8 @@ class WorklogApp(ctk.CTk):
 
     def _browse_file(self) -> None:
         """Open a file dialog and load the selected CSV."""
-        file_path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+        filetypes = [["Source File", get_supported_formats()]]
+        file_path = filedialog.askopenfilename(filetypes=filetypes)
         if file_path:
             self.file_frame.set_file_path(file_path)
             self._load_entries(Path(file_path))
@@ -194,15 +196,22 @@ class WorklogApp(ctk.CTk):
             self.options_frame.selected_timezone,
         )
         try:
-            self.entries, total_hours = self.processor.load_entries(file_path)
+            provider_name = self.file_frame.provider_name
+            self.entries, total_hours = self.processor.load_entries(
+                file_path, provider_name
+            )
         except Exception as e:
             err_str = str(e)
             self._update_status("Failed Loading Entries")
             self._show_error("Error", f"Failed Loading Entries\n{err_str}")
         else:
-            self._update_status(f"Total: {total_hours}")
-            self._update_table()
-            self.process_btn.configure(state="normal")
+            if self.entries:
+                self._update_status(f"Total: {total_hours}")
+                self._update_table()
+                self.process_btn.configure(state="normal")
+            else:
+                self._update_table()
+                self._update_status("Couldn't parse any entry")
 
     def _update_table(self) -> None:
         """Refresh the treeview with current entries."""

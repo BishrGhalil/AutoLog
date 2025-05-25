@@ -12,8 +12,8 @@ import pytz
 class WorklogEntry:
     started: datetime
     duration: int
-    description: str
     activity: str
+    description: Optional[str] = ""
     timezone: Optional[str] = None
     raw_issue_key: str = None
     issue_key: str = None

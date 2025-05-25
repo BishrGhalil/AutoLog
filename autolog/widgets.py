@@ -9,6 +9,7 @@ import pytz
 from customtkinter import ThemeManager
 
 from autolog.constants import ColumnID
+from autolog.providers.factory import get_providers_names
 
 
 class FileSelectorFrame(ctk.CTkFrame):
@@ -16,17 +17,36 @@ class FileSelectorFrame(ctk.CTkFrame):
 
     def __init__(self, master: ctk.CTk, browse_callback: Callable[[], None], **kwargs):
         super().__init__(master, **kwargs)
+        self.provider_selector = ctk.CTkOptionMenu(
+            self,
+            values=get_providers_names(),
+            width=100,
+            command=self.on_provider_select,
+        )
         self.file_entry = ctk.CTkEntry(self)
         self.browse_btn = ctk.CTkButton(self, text="Browse", command=browse_callback)
         self._layout()
 
     def _layout(self) -> None:
+        self.provider_selector.pack(side="left", padx=5, fill="x")
         self.file_entry.pack(side="left", padx=5, fill="x", expand=True)
         self.browse_btn.pack(side="left", padx=5)
+
+    def on_provider_select(self, provider: str):
+        if provider:
+            self.file_entry.configure(state=tk.NORMAL)
+            self.browse_btn.configure(state=tk.NORMAL)
+        else:
+            self.file_entry.configure(state=tk.DISABLED)
+            self.browse_btn.configure(state=tk.DISABLED)
 
     @property
     def file_path(self) -> Path:
         return Path(self.file_entry.get())
+
+    @property
+    def provider_name(self) -> str:
+        return self.provider_selector.get()
 
     def set_file_path(self, path: str) -> None:
         self.file_entry.delete(0, tk.END)

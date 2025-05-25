@@ -24,13 +24,13 @@
 
 
 ## About
-**AutoLog** is a tool that automates the process of logging work entries into Jira from various data sources. Currently, the only supported data source is **CSV**, with support for additional sources planned for future releases.
+**AutoLog** is a tool that automates the process of logging work entries into Jira from various data sources. Currently, Both **Odoo**, and **Kimai** providers are implemented with support for both **CSV** and **Excel** file types.
 
 <img src=".github/ui.png" alt="UI" width="70%"/>
 
 ## Prerequisites
-- Jira account with appropriate [API access](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/#Create-an-API-token)
-- CSV file formatted according to the expected schema ([see below](#csv-format))
+- Jira account with appropriate [API access](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/#Create-an-API-token).
+- Worklog file exported from the supported providers.
 
 ---
 
@@ -58,36 +58,6 @@ python main.py
 
 ---
 
-## CSV Format
-
-The input CSV should include the following columns (Kimai format), Order doesn't matter:
-
-| Field                  | Description                                                        |
-| ---------------------- | ------------------------------------------------------------------ |
-| Date                   | Start date (e.g., 2025-05-07)                                      |
-| From                   | Start time (e.g., 8:00)                                            |
-| Duration               | Time spent in seconds                                              |
-| Activity               | Contains Jira issue key (e.g., [PROJ-123] blah or [PROJ] 123 blah) |
-| Description (optional) | Work log comment                                                   |
-
-**Example**
-
-| Date       | From  | Duration | Activity                      | Description                    |
-| ---------- | ----- | -------- | ----------------------------- | ------------------------------ |
-| 2025-05-04 | 08:00 | 28800    | [SWTF-7] Series Edit Page     | implemented series edit page   |
-| 2025-05-07 | 11:00 | 10800    | [SWTF-8] Auto White Balancing |                                |
-| 2025-05-05 | 08:00 | 21600    | [SWTF-9] Authentication       | refactored authentication code |
-
----
-
-## Running the Tool
-
-```bash
-python main.py
-```
-
----
-
 ## Development
 
 ```bash
@@ -97,9 +67,16 @@ pre-commit install
 uv run main.py
 ```
 
-Use [commitizen](https://commitizen-tools.github.io/commitizen/) for bumping
+Use [commitizen](https://commitizen-tools.github.io/commitizen/):
+
+for committing
 ```bash
 cz c
+```
+
+for bumping:
+```bash
+cz bump
 ```
 
 Run linters:

@@ -97,6 +97,11 @@ pre-commit install
 uv run main.py
 ```
 
+Use [commitizen](https://commitizen-tools.github.io/commitizen/) for bumping
+```bash
+cz c
+```
+
 Run linters:
 
 ```bash

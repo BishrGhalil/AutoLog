@@ -49,9 +49,12 @@ jobs:
         id: extract_changelog
         shell: bash
         run: |
-          # Grab from the header for this version until the next header
-          awk "/^## \\[${{ steps.get_version.outputs.VERSION }}\\]/ {p=1} p; /^## \\[.*\\]/ && p && !/^## \\[${{ steps.get_version.outputs.VERSION }}\\]/ {exit}" CHANGELOG.md \
-            > release_notes.md
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+          awk -v v="$VERSION" '
+            /^##[[:space:]]*v?'"$VERSION"'[[:space:]]*\(/ { p = 1 }
+            p && /^##[[:space:]]*[vV]?[0-9]/ && !/^##[[:space:]]*v?'"$VERSION"'[[:space:]]*\(/ { exit }
+            p { print }
+          ' CHANGELOG.md > release_notes.md
 
       # Placeholder for running tests
       # - name: Run tests

@@ -11,7 +11,7 @@ from typing import List, Optional
 import customtkinter as ctk
 from jira.exceptions import JIRAError
 
-from autolog import __version__
+from autolog.__version__ import version
 from autolog.constants import (
     APP_HEIGHT,
     APP_MIN_HEIGHT,
@@ -330,13 +330,13 @@ class WorklogApp(ctk.CTk):
     def _check_for_updates(self) -> None:
         """
         In a background thread, fetch the latest release.
-        If newer than __version__, prompt the user with Update / Ignore.
+        If newer than version, prompt the user with Update / Ignore.
         """
 
         def _worker():
             try:
                 info = get_latest_release_info("Bishrghalil/Autolog")
-                if is_update_available(__version__, info["version"]):
+                if is_update_available(version, info["version"]):
                     # run prompt on the main thread
                     def _prompt():
                         msg = (

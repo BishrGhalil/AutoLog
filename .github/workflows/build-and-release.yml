@@ -43,6 +43,15 @@ jobs:
           EOF)
 
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+      
+       # Extract just the matching section from CHANGELOG.md
+      - name: Extract changelog for v${{ steps.get_version.outputs.VERSION }}
+        id: extract_changelog
+        shell: bash
+        run: |
+          # Grab from the header for this version until the next header
+          awk "/^## \\[${{ steps.get_version.outputs.VERSION }}\\]/ {p=1} p; /^## \\[.*\\]/ && p && !/^## \\[${{ steps.get_version.outputs.VERSION }}\\]/ {exit}" CHANGELOG.md \
+            > release_notes.md
 
       # Placeholder for running tests
       # - name: Run tests
@@ -67,11 +76,13 @@ jobs:
           folder:         'dist'                     # sign everything under dist/
           recursive:      true
 
+      # create the GitHub Release, pointing at our extracted notes
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.get_version.outputs.VERSION }}
-          name: Release v${{ steps.get_version.outputs.VERSION }}
-          files: dist/AutoLog.exe
+          tag_name:    v${{ steps.get_version.outputs.VERSION }}
+          name:        Release v${{ steps.get_version.outputs.VERSION }}
+          body_path:   release_notes.md
+          files:       dist/AutoLog.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
